@@ -1,7 +1,13 @@
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 
-const regex = /^https?:\/\/(www.)?[a-zA-Z0-9-.]+\.[a-zA-Z]{2,}([a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+)*#*$/;
-
+const customValidate = (url) => {
+  const result = validator.isURL(url);
+  if (!result) {
+    throw new Error('URL заполнен неправильно');
+  }
+  return url;
+};
 const idMovieValidation = celebrate({
   params: Joi.object().keys({
     id: Joi.string().length(24).hex(),
@@ -17,7 +23,7 @@ const loginValidation = celebrate({
 
 const userValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
@@ -31,9 +37,9 @@ const movieValidation = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().pattern(regex),
-    trailer: Joi.string().required().pattern(regex),
-    thumbnail: Joi.string().required().pattern(regex),
+    image: Joi.string().required().custom(customValidate),
+    trailer: Joi.string().required().custom(customValidate),
+    thumbnail: Joi.string().required().custom(customValidate),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),

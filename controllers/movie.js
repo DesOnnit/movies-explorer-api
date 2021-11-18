@@ -16,7 +16,7 @@ const createMovie = (req, res, next) => {
   const {
     country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId,
   } = req.body;
-  const owner = req.user_id;
+  const owner = req.user._id;
   Movie.create({
     country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId, owner,
   })
@@ -32,20 +32,19 @@ const createMovie = (req, res, next) => {
 
 const deleteMovie = (req, res, next) => {
   const { id } = req.params;
-  const owner = req.user_id;
+  const owner = req.user._id;
   Movie.findById(id)
     .then((movie) => {
       if (!movie) {
         throw new NotFound('Такого фильма не сущетсвует');
       }
       if (movie.owner.toString() === owner) {
-        Movie.findByIdAndRemove(id)
+        return Movie.findByIdAndRemove(id)
           .then((movieData) => {
             res.send(movieData);
           });
-      } else {
-        throw new Forbidden('Недостаточно прав');
       }
+      throw new Forbidden('Недостаточно прав');
     })
     .catch(next);
 };

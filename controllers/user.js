@@ -9,7 +9,7 @@ const Conflict = require('../errors/Conflict');
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
-  const userId = req.user_id;
+  const userId = req.user._id;
   User.findOne({ userId })
     .then((user) => {
       res.status(200).send({ data: user });
@@ -29,13 +29,14 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         throw new Conflict('Пользователь с таким email уже существует');
-      }
-    })
-    .catch(next);
+      } else if (err.name === 'ValidationError') {
+        throw new BadRequest('Переданы некорректные данные');
+      } else { next(err); }
+    });
 };
 
-const updateUser = (req, res) => {
-  const userId = req.user_id;
+const updateUser = (req, res, next) => {
+  const userId = req.user._id;
   const { email, name } = req.body;
   User.findByIdAndUpdate(userId, { email, name }, { new: true, runValidators: true })
     .then((user) => {
@@ -47,7 +48,9 @@ const updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest('Переданы некорректные данные');
-      }
+      } else if (err.code === 11000) {
+        throw new Conflict('Пользователь с таким email уже существует');
+      } else { next(err); }
     });
 };
 

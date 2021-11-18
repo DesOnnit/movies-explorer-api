@@ -1,4 +1,4 @@
-/* require('dotenv').config(); */
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -6,13 +6,10 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const cors = require('cors');
-const { createUser, login, logout } = require('./controllers/user');
 const router = require('./routes/index');
-const auth = require('./middlewares/auth');
 const NotFound = require('./errors/NotFound');
 const error = require('./middlewares/error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { loginValidation, userValidation } = require('./middlewares/validation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -37,10 +34,7 @@ app.use(cors({
 
 mongoose.connect('mongodb://localhost:27017/moviesdb');
 app.use(requestLogger);
-app.post('/signup', userValidation, createUser);
-app.post('/signin', loginValidation, login);
-app.post('/signout', logout);
-app.use(auth, router);
+app.use(router);
 app.use('*', () => {
   throw new NotFound('Запрашиваемый ресурс не найден');
 });
