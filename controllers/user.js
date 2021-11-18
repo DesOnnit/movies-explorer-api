@@ -29,10 +29,10 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         throw new Conflict('Пользователь с таким email уже существует');
-      } else if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
-      } else { next(err); }
-    });
+      }
+      throw err;
+    })
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
@@ -48,10 +48,13 @@ const updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest('Переданы некорректные данные');
-      } else if (err.code === 11000) {
+      }
+      if (err.code === 11000) {
         throw new Conflict('Пользователь с таким email уже существует');
-      } else { next(err); }
-    });
+      }
+      throw err;
+    })
+    .catch(next);
 };
 
 const login = (req, res, next) => {
