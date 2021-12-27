@@ -10,7 +10,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
   const userId = req.user._id;
-  User.findOne({ userId })
+  User.findById(userId)
     .then((user) => {
       res.status(200).send({ data: user });
     })
