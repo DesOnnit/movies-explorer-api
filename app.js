@@ -19,14 +19,14 @@ app.use(cookieParser());
 
 app.use(cors({
   origin: [
-    'https://onnit.student.nomoredomains.rocks',
-    'http://onnit.student.nomoredomains.rocks',
+    'https://diplom.movies.nomoredomains.work',
+    'http://diplom.movies.nomoredomains.work',
     'http://localhost:3001',
     'https://localhost:3001',
     'http://localhost:3000',
     'https://localhost:3000',
-    'http://51.250.9.2',
-    'https://51.250.9.2',
+    'http://51.250.4.109',
+    'https://51.250.4.109',
   ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
